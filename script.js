@@ -462,6 +462,7 @@ touchButtons.forEach(button => {
     button.classList.add("pressed");
     button.setPointerCapture?.(e.pointerId);
   }
+  
 
   function release(e){
     e.preventDefault();
