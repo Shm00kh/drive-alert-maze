@@ -243,10 +243,10 @@ function update(){
   let nx = player.x;
   let ny = player.y;
 
-  if(keys.ArrowUp) ny -= player.speed;
-  if(keys.ArrowDown) ny += player.speed;
-  if(keys.ArrowLeft) nx -= player.speed;
-  if(keys.ArrowRight) nx += player.speed;
+if(keys.ArrowUp || gamepadButtons.up) ny -= player.speed;
+if(keys.ArrowDown || gamepadButtons.down) ny += player.speed;
+if(keys.ArrowLeft || gamepadButtons.left) nx -= player.speed;
+if(keys.ArrowRight || gamepadButtons.right) nx += player.speed;
 
   if(!isWall(nx, ny, player.size)){
     player.x = nx;
@@ -490,3 +490,52 @@ if (enterBtn && introScreen && gameApp) {
     }, 450);
   });
 }
+
+
+
+// ==============================
+// PLAYSTATION CONTROLLER SUPPORT
+// ==============================
+
+let gamepadButtons = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+};
+
+function updateGamepad(){
+  const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  const gp = gamepads[0];
+
+  gamepadButtons.up = false;
+  gamepadButtons.down = false;
+  gamepadButtons.left = false;
+  gamepadButtons.right = false;
+
+  if(gp){
+
+    // Left analog stick
+    const axisX = gp.axes[0];
+    const axisY = gp.axes[1];
+
+    if(axisY < -0.4) gamepadButtons.up = true;
+    if(axisY > 0.4) gamepadButtons.down = true;
+    if(axisX < -0.4) gamepadButtons.left = true;
+    if(axisX > 0.4) gamepadButtons.right = true;
+
+    // D-pad support
+    if(gp.buttons[12]?.pressed) gamepadButtons.up = true;
+    if(gp.buttons[13]?.pressed) gamepadButtons.down = true;
+    if(gp.buttons[14]?.pressed) gamepadButtons.left = true;
+    if(gp.buttons[15]?.pressed) gamepadButtons.right = true;
+  }
+
+  requestAnimationFrame(updateGamepad);
+}
+
+window.addEventListener("gamepadconnected", () => {
+  console.log("PlayStation controller connected 🎮");
+});
+
+updateGamepad();
